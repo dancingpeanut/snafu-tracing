@@ -15,10 +15,9 @@
 //! pub enum Error {
 //!     #[snafu(display("{_error}"))]
 //!     Any { _error: String },
-//!     #[snafu(display("{error_source}"))]
+//!     #[snafu(display("{error}"))]
 //!     Wrap {
-//!         #[snafu(source(from(Box<dyn std::error::Error + Send + Sync>, |e| e)))]
-//!         error_source: Box<dyn std::error::Error + Send + Sync>,
+//!         error: Box<dyn std::error::Error + Send + Sync>,
 //!     },
 //! }
 //! 
