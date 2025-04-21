@@ -1,6 +1,6 @@
 use std::fs::File;
 use snafu::ResultExt;
-use crate::errors::anyerr;
+use crate::errors::{anyerr, MyResultExt};
 use crate::m2::hello_m2;
 use crate::errors::{error, Result};
 
@@ -30,9 +30,10 @@ pub fn hello_anyhow() -> Result<()> {
 pub fn hello_file() -> Result<()> {
     println!("Hello, m1 file!");
     // let _ = File::open("test.txt").context(error::IO)?;
-    let _ = File::open("test.txt")
-        .boxed()
-        .context(error::Wrap)?;
+    // let _ = File::open("test.txt")
+    //     .boxed()
+    //     .context(error::Wrap)?;
+    let _ = File::open("test.txt").wrap()?;
 
     Ok(())
 }
