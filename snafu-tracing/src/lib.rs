@@ -10,8 +10,8 @@
 //! pub type Result<T, E = Error> = std::result::Result<T, E>;
 //! 
 //! #[trace_error]
-//! #[wrap_result_ext]
 //! #[drive_anyerr]
+//! #[wrap_result_ext]
 //! #[derive(Snafu, DebugTrace)]
 //! #[snafu(module, context(suffix(false)), visibility(pub))]
 //! pub enum Error {
