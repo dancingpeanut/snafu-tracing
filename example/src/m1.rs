@@ -5,7 +5,6 @@ use crate::m2::hello_m2;
 use crate::errors::{error, Result};
 
 pub fn hello_err1() -> Result<()> {
-    println!("hello_err1!");
     Err(error::Code { id: 1u16 }.build())
 }
 
@@ -15,7 +14,6 @@ pub fn hello_err2() -> Result<()> {
 }
 
 pub fn hello_err() -> Result<()> {
-    println!("hello_err!");
     hello_m2()
 }
 
@@ -28,7 +26,6 @@ pub fn hello_anyhow() -> Result<()> {
 }
 
 pub fn hello_file() -> Result<()> {
-    println!("Hello, m1 file!");
     // let _ = File::open("test.txt").context(error::IO)?;
     // let _ = File::open("test.txt")
     //     .boxed()
