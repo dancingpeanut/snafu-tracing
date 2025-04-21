@@ -1,0 +1,21 @@
+[package]
+name = "snafu-tracing-macro"
+version = "0.8.0"
+edition = "2024"
+description = "Macro for snafu-tracing"
+authors = ["Thomson <tongshengzhou@gmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dancingpeanut/snafu-tracing"
+
+include = [
+    "Cargo.toml",
+    "src/**/*",
+]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+syn = { version = "2", features = ["full"] }
+quote = { version = "1" }

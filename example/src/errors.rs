@@ -1,0 +1,29 @@
+use snafu::Snafu;
+use snafu_tracing::{DebugTrace, trace_error, quick_tracing};
+
+pub type Result<T, E = Error> = std::result::Result<T, E>;
+
+#[trace_error]
+#[derive(Snafu, DebugTrace)]
+#[snafu(module, context(suffix(false)), visibility(pub))]
+pub enum Error {
+    #[snafu(display("{_error}"))]
+    Any { _error: String },
+    #[snafu(display("{error_source}"))]
+    Wrap {
+        #[snafu(source(from(Box<dyn std::error::Error + Send + Sync>, |e| e)))]
+        error_source: Box<dyn std::error::Error + Send + Sync>,
+    },
+
+    #[snafu(display("Error code: {id}"))]
+    Code { id: u16 },
+    #[snafu(display("IO error"))]
+    IO { error: std::io::Error },
+    #[snafu(display("Simple error"))]
+    Simple,
+    #[snafu(display("{error}"))]
+    Anyhow { error: anyhow::Error },
+}
+
+quick_tracing!(anyerr, crate::errors::error::Any);
+pub use anyerr;

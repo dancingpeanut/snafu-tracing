@@ -1,0 +1,9 @@
+[package]
+name = "demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+snafu-tracing.workspace = true
+snafu.workspace = true
+anyhow = "1.0"
