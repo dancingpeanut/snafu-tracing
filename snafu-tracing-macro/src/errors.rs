@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::parse::{Parse, ParseStream, Parser};
-use syn::{parse_macro_input, parse_quote, DeriveInput, GenericArgument, Ident, Path, PathArguments, Token, Type};
+use syn::parse::{Parse, Parser};
+use syn::{parse_macro_input, parse_quote, DeriveInput, GenericArgument, ItemEnum, PathArguments, Type};
 
 fn extract_type_from_box(ty: &Type) -> Option<&Type> {
     let Type::Path(type_path) = ty else {
@@ -134,55 +134,84 @@ pub fn derive_debug_trace(input: TokenStream) -> TokenStream {
     .into()
 }
 
-struct MacroArgs {
-    macro_name: Ident,
-    struct_path: Path,
-}
+pub fn wrap_result_ext(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    // 解析输入的 TokenStream 为一个结构体
+    let input = parse_macro_input!(item as ItemEnum);
 
-impl Parse for MacroArgs {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let macro_name = input.parse()?;
-        input.parse::<Token![,]>()?;
-        let struct_path = input.parse()?;
-        if !input.is_empty() {
-            return Err(input.error("expected only two arguments"));
-        }
-        Ok(Self { macro_name, struct_path })
-    }
-}
+    // Error名称
+    let error_name = input.ident.clone();
 
-pub fn quick_tracing(input: TokenStream) -> TokenStream {
-    let args = parse_macro_input!(input as MacroArgs);
-    let macro_name = args.macro_name;
-    let struct_path = args.struct_path;
-
+    // 生成新的代码
     let expanded = quote! {
+        // 保留原始结构体
+        #input
+
+        pub trait WrapResultExt<T>: Sized {
+            fn wrap(self) -> std::result::Result<T, #error_name>;
+        }
+        
+        impl<T, E: std::error::Error + Send + Sync + 'static> WrapResultExt<T> for std::result::Result<T, E> {
+            #[track_caller]
+            fn wrap(self) -> std::result::Result<T, #error_name> {
+                match self {
+                    Ok(v) => Ok(v),
+                    Err(error) =>{
+                        let error = #error_name::Wrap {
+                            error: Box::new(error),
+                            _location: Default::default(),
+                        };
+                        Err(error)
+                    },
+                }
+            }
+        }
+    };
+
+    // 返回生成的代码
+    TokenStream::from(expanded)
+}
+
+pub fn anyerr(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    // 解析输入的 TokenStream 为一个结构体
+    let input = parse_macro_input!(item as ItemEnum);
+
+    // Error名称
+    let error_name = input.ident.clone();
+
+    // 生成新的代码
+    let expanded = quote! {
+        // 保留原始结构体
+        #input
+
         #[macro_export]
-        macro_rules! #macro_name {
+        macro_rules! anyerr {
             ($msg:literal) => {
                 {
-                    #struct_path {
-                        _error: $msg.to_string()
-                    }.build()
+                    #error_name::Any {
+                        _error: $msg.to_string(),
+                        _location: Default::default(),
+                    }
                 }
             };
             ($fmt:expr, $($arg:tt)*) => {
                 {
-                    #struct_path {
-                        _error: ::std::format!($fmt, $($arg)*)
-                    }.build()
+                    #error_name::Any {
+                        _error: ::std::format!($fmt, $($arg)*),
+                        _location: Default::default(),
+                    }
                 }
             };
             ($error:expr) => {
                 {
-                    #struct_path {
-                        _error: $error.into()
-                    }.build()
+                    #error_name::Any {
+                        _error: $error.into(),
+                        _location: Default::default(),
+                    }
                 }
             };
         }
     };
 
-    expanded.into()
+    // 返回生成的代码
+    TokenStream::from(expanded)
 }
-

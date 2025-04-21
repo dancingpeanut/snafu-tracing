@@ -1,6 +1,6 @@
 use std::fs::File;
 use snafu::ResultExt;
-use crate::errors::{anyerr, MyResultExt};
+use crate::errors::{anyerr, Error, WrapResultExt};
 use crate::m2::hello_m2;
 use crate::errors::{error, Result};
 
@@ -10,7 +10,8 @@ pub fn hello_err1() -> Result<()> {
 
 pub fn hello_err2() -> Result<()> {
     let _e = anyerr!("Any error test! {}", 123);
-    Err(anyerr!("Any error test!"))
+    // Err(anyerr!("Any error test!"))
+    Ok(())
 }
 
 pub fn hello_err() -> Result<()> {

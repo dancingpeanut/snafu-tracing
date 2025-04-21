@@ -1,9 +1,11 @@
 use snafu::Snafu;
-use snafu_tracing::{DebugTrace, trace_error, quick_tracing};
+use snafu_tracing::{DebugTrace, trace_error, wrap_result_ext, drive_anyerr};
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[trace_error]
+#[wrap_result_ext]
+#[drive_anyerr]
 #[derive(Snafu, DebugTrace)]
 #[snafu(module, context(suffix(false)), visibility(pub))]
 pub enum Error {
@@ -24,25 +26,5 @@ pub enum Error {
     Anyhow { error: anyhow::Error },
 }
 
-quick_tracing!(anyerr, crate::errors::error::Any);
+// quick_tracing!(anyerr, crate::errors::error::Any);
 pub use anyerr;
-
-pub trait MyResultExt<T>: Sized {
-    fn wrap(self) -> std::result::Result<T, Error>;
-}
-
-impl<T, E: std::error::Error + Send + Sync + 'static> MyResultExt<T> for std::result::Result<T, E> {
-    #[track_caller]
-    fn wrap(self) -> std::result::Result<T, Error> {
-        match self {
-            Ok(v) => Ok(v),
-            Err(error) =>{
-                let error = Error::Wrap {
-                    error: Box::new(error),
-                    _location: Default::default(),
-                };
-                Err(error)
-            },
-        }
-    }
-}
