@@ -1,23 +1,13 @@
 use core::error::Error as StdError;
 use core::fmt::{Display, Debug};
-use snafu_tracing_macro::enrich_error;
+use snafu_tracing_macro::{enrich_error, enrich_with_chain};
 use crate::my_error::location::Location;
 
 #[enrich_error]
+#[enrich_with_chain]
 #[derive(Debug)]
 pub enum Error {
     Code { error: u16 },
-}
-
-impl Error {
-    pub fn with_chain(self, mut chain: Error) -> Self {
-        match &mut chain {
-            Error::Message { chain: c, .. } => *c = Some(Box::new(self)),
-            Error::Wrap { chain: c, .. } => *c = Some(Box::new(self)),
-            Error::Code { chain: c, .. } => *c = Some(Box::new(self)),
-        }
-        chain
-    }
 }
 
 impl<E> From<E> for Error

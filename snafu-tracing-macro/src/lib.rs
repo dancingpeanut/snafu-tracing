@@ -71,3 +71,41 @@ pub fn enrich_error(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     output.into()
 }
+
+#[proc_macro_attribute]
+pub fn enrich_with_chain(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input_enum = parse_macro_input!(item as ItemEnum);
+    let enum_ident = &input_enum.ident;
+
+    // 提取变体名用于生成 match 分支
+    let mut match_arms = vec![];
+
+    for variant in &input_enum.variants {
+        let var_ident = &variant.ident;
+
+        if let Fields::Named(fields_named) = &variant.fields {
+            let has_chain = fields_named.named.iter().any(|f| f.ident.as_ref().unwrap() == "chain");
+
+            if has_chain {
+                match_arms.push(quote! {
+                    Self::#var_ident { chain: c, .. } => *c = Some(Box::new(self)),
+                });
+            }
+        }
+    }
+
+    let enum_def = quote! {
+        #input_enum
+
+        impl #enum_ident {
+            pub fn with_chain(self, mut chain: Self) -> Self {
+                match &mut chain {
+                    #(#match_arms)*
+                }
+                chain
+            }
+        }
+    };
+
+    enum_def.into()
+}
