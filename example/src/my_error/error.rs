@@ -1,4 +1,4 @@
-use core::fmt::{Display, Debug};
+use core::fmt::Debug;
 use snafu_tracing_macro::{enrich_error, enrich_with_chain};
 use crate::my_error::location::Location;
 
