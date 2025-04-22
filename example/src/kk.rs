@@ -1,5 +1,5 @@
 use core::error::Error as StdError;
-use core::fmt::{self, Display, Debug};
+use core::fmt::{Display, Debug};
 use crate::location::Location;
 
 #[derive(Debug)]
