@@ -34,6 +34,9 @@ fn main() -> errors::Result<()> {
     if let Err(e) = gg::g3() {
         println!("--13: {e:?}");
     }
+    if let Err(e) = gg::g5() {
+        println!("--15: {e:?}");
+    }
 
     Ok(())
 }

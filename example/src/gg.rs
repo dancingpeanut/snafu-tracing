@@ -16,3 +16,15 @@ pub fn g2() -> Result<()> {
 pub fn g3() -> Result<()> {
     g1().context("11")
 }
+
+pub fn g4() -> Result<()> {
+    Err(crate::kk::Error::Code {
+        error: 0,
+        location: Default::default(),
+        chain: None,
+    })
+}
+
+pub fn g5() -> Result<()> {
+    g4().context("11")
+}

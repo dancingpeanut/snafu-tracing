@@ -14,20 +14,20 @@ pub enum Error {
         location: Location,
         chain: Option<Box<Self>>
     },
+    
+    Code {
+        error: u16,
+        location: Location,
+        chain: Option<Box<Self>>
+    },
 }
 
 impl Error {
-    pub fn location(&self) -> &Location {
-        match self {
-            Error::Message { location, .. } => location,
-            Error::Wrap { location, .. } => location,
-        }
-    }
-    
     pub fn with_chain(self, mut chain: Error) -> Self {
         match &mut chain {
             Error::Message { chain: c, .. } => *c = Some(Box::new(self)),
             Error::Wrap { chain: c, .. } => *c = Some(Box::new(self)),
+            Error::Code { chain: c, .. } => *c = Some(Box::new(self)),
         }
         chain
     }
