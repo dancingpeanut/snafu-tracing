@@ -1,4 +1,4 @@
-use crate::kk::KError;
+use crate::kk::Error;
 
 mod errors;
 mod m1;
@@ -33,8 +33,8 @@ fn main() -> errors::Result<()> {
     if let Err(e) = gg::g2() {
         println!("--12: {e:?}");
         match e {
-            KError::Any { .. } => {}
-            KError::Wrap { .. } => {}
+            Error::Any { .. } => {}
+            Error::Wrap { .. } => {}
         }
     }
 
