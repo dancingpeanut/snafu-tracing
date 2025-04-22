@@ -123,3 +123,61 @@ pub fn enrich_with_chain(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     enum_def.into()
 }
+
+#[proc_macro_attribute]
+pub fn derive_wrap(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemEnum);
+    let enum_name = &input.ident;
+
+    let mut impls = vec![];
+
+    for variant in &input.variants {
+        let variant_name = &variant.ident;
+
+        if let Fields::Named(fields_named) = &variant.fields {
+            let mut error_field_type = None;
+            let mut field_assignments = vec![];
+
+            for field in &fields_named.named {
+                let ident = field.ident.as_ref().unwrap();
+                if ident == "error" {
+                    error_field_type = Some(&field.ty);
+                    field_assignments.push(quote! {
+                        #ident: e
+                    });
+                } else {
+                    field_assignments.push(quote! {
+                        #ident: Default::default()
+                    });
+                }
+            }
+
+            if let Some(error_ty) = error_field_type {
+                let impl_block = quote! {
+                    impl<T> Wrap<T> for Result<T, #error_ty> {
+                        fn wrap(self) -> Result<T, #enum_name> {
+                            self.map_err(|e| {
+                                #enum_name::#variant_name {
+                                    #(#field_assignments),*
+                                }
+                            })
+                        }
+                    }
+                };
+                impls.push(impl_block);
+            }
+        }
+    }
+
+    let output = quote! {
+        #input
+
+        pub trait Wrap<T> {
+            fn wrap(self) -> std::result::Result<T, #enum_name>;
+        }
+
+        #(#impls)*
+    };
+
+    output.into()
+}

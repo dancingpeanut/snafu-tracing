@@ -1,8 +1,11 @@
 use std::fs::File;
 use crate::my_error::{Context, Error, Result};
+use crate::my_error::error::Wrap;
 
 pub fn g1() -> Result<()> {
     let _ = File::open("test.txt")?;
+    
+    let _ = File::open("test.txt").wrap();
 
     Ok(())
 }
