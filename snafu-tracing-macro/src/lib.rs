@@ -50,7 +50,7 @@ pub fn enrich_error(_attr: TokenStream, item: TokenStream) -> TokenStream {
     }
 
     // 添加新的两个变体
-    let extra_variants: syn::ItemEnum = syn::parse2(quote! {
+    let extra_variants: ItemEnum = syn::parse2(quote! {
         enum Dummy {
             Message {
                 msg: String,

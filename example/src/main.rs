@@ -1,3 +1,5 @@
+use crate::my_error::Error;
+
 mod errors;
 mod m1;
 mod m2;
@@ -26,6 +28,12 @@ fn main() -> errors::Result<()> {
 
     if let Err(e) = gg::g1() {
         println!("--11: {e:?}");
+        match e {
+            Error::Wrap { error, .. } => {
+                
+            }
+            _ => {}
+        }
     }
     if let Err(e) = gg::g2() {
         println!("--12: {e:?}");
