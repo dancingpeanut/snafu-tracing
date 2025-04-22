@@ -26,7 +26,7 @@ fn main() -> errors::Result<()> {
     if let Err(e) = m1::hello_anyhow() {
         println!("--10: {e:?}");
     }
-    
+
     if let Err(e) = gg::g1() {
         println!("--11: {e:?}");
     }
