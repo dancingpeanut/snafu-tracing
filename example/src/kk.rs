@@ -6,13 +6,13 @@ use crate::location::Location;
 pub enum Error {
     Message {
         msg: String,
-        source: Option<Box<Self>>,
         location: Location,
+        chain: Option<Box<Self>>
     },
     Wrap {
-        msg: String,
-        source: Box<dyn StdError + Send + Sync + 'static>,
+        error: Box<dyn StdError + Send + Sync + 'static>,
         location: Location,
+        chain: Option<Box<Self>>
     },
 }
 
@@ -23,6 +23,14 @@ impl Error {
             Error::Wrap { location, .. } => location,
         }
     }
+    
+    pub fn with_chain(self, mut chain: Error) -> Self {
+        match &mut chain {
+            Error::Message { chain: c, .. } => *c = Some(Box::new(self)),
+            Error::Wrap { chain: c, .. } => *c = Some(Box::new(self)),
+        }
+        chain
+    }
 }
 
 impl<E> From<E> for Error
@@ -32,9 +40,9 @@ where
     #[track_caller]
     fn from(e: E) -> Self {
         Error::Wrap {
-            msg: "".to_string(),
-            source: Box::new(e),
+            error: Box::new(e),
             location: Location::default(),
+            chain: None,
         }
     }
 }
@@ -57,10 +65,13 @@ where
     where
         M: Display + Send + Sync + 'static,
     {
-        self.map_err(|e| Error::Wrap {
-            msg: msg.to_string(),
-            source: Box::new(e),
-            location: Location::default(),
+        self.map_err(|e| {
+            let w = Error::Wrap {
+                error: Box::new(e),
+                location: Location::default(),
+                chain: None,
+            };
+            w
         })
     }
 }
@@ -71,10 +82,13 @@ impl<T> Context<T, Error> for std::result::Result<T, Error> {
     where
         M: Display + Send + Sync + 'static,
     {
-        self.map_err(|e| Error::Message {
-            msg: msg.to_string(),
-            source: Some(Box::new(e)),
-            location: Location::default(),
+        self.map_err(|e| {
+            let m = Error::Message {
+                msg: msg.to_string(),
+                location: Location::default(),
+                chain: None,
+            };
+            m.with_chain(e)
         })
     }
 }
