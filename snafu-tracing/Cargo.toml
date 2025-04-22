@@ -1,6 +1,6 @@
 [package]
 name = "snafu-tracing"
-version = "0.8.3"
+version = "0.8.5"
 edition = "2024"
 description = "Snafu tracing is an error handling mechanism with pseudo-stack traces implemented through SNAFU, the proc macro trace_error, and the DebugTrace trait, inspired by GreptimeDB."
 authors = ["Thomson <tongshengzhou@gmail.com>"]

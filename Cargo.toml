@@ -10,4 +10,4 @@ members = [
 [workspace.dependencies]
 snafu = "0.8"
 snafu-tracing-macro = { version = "0.8.0", path = "snafu-tracing-macro" }
-snafu-tracing = { version = "0.8.3", path = "snafu-tracing" }
+snafu-tracing = { version = "0.8.5", path = "snafu-tracing" }

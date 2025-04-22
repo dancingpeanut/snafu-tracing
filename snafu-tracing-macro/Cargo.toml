@@ -1,6 +1,6 @@
 [package]
 name = "snafu-tracing-macro"
-version = "0.8.0"
+version = "0.8.5"
 edition = "2024"
 description = "Macro for snafu-tracing"
 authors = ["Thomson <tongshengzhou@gmail.com>"]
