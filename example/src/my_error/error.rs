@@ -1,25 +1,12 @@
 use core::error::Error as StdError;
 use core::fmt::{Display, Debug};
+use snafu_tracing_macro::enrich_error;
 use crate::my_error::location::Location;
 
+#[enrich_error]
 #[derive(Debug)]
 pub enum Error {
-    Message {
-        msg: String,
-        location: Location,
-        chain: Option<Box<Self>>
-    },
-    Wrap {
-        error: Box<dyn StdError + Send + Sync + 'static>,
-        location: Location,
-        chain: Option<Box<Self>>
-    },
-    
-    Code {
-        error: u16,
-        location: Location,
-        chain: Option<Box<Self>>
-    },
+    Code { error: u16 },
 }
 
 impl Error {
