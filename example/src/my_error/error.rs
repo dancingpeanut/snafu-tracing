@@ -1,6 +1,6 @@
 use core::error::Error as StdError;
 use core::fmt::{Display, Debug};
-use crate::location::Location;
+use crate::my_error::location::Location;
 
 #[derive(Debug)]
 pub enum Error {

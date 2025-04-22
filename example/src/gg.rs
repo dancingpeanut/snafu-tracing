@@ -1,5 +1,5 @@
 use std::fs::File;
-use crate::kk::{Context, Result};
+use crate::my_error::error::{Context, Error, Result};
 
 pub fn g1() -> Result<()> {
     let _ = File::open("test.txt")?;
@@ -18,7 +18,7 @@ pub fn g3() -> Result<()> {
 }
 
 pub fn g4() -> Result<()> {
-    Err(crate::kk::Error::Code {
+    Err(Error::Code {
         error: 0,
         location: Default::default(),
         chain: None,
