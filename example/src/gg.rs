@@ -18,11 +18,12 @@ pub fn g3() -> Result<()> {
 }
 
 pub fn g4() -> Result<()> {
-    Err(Error::Code {
+    let e = Error::Code {
         error: 0,
         location: Default::default(),
         chain: None,
-    })
+    };
+    Err(e)
 }
 
 pub fn g5() -> Result<()> {
