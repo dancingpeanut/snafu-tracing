@@ -1,5 +1,3 @@
-use crate::kk::Error;
-
 mod errors;
 mod m1;
 mod m2;
@@ -32,10 +30,9 @@ fn main() -> errors::Result<()> {
     }
     if let Err(e) = gg::g2() {
         println!("--12: {e:?}");
-        match e {
-            Error::Any { .. } => {}
-            Error::Wrap { .. } => {}
-        }
+    }
+    if let Err(e) = gg::g3() {
+        println!("--13: {e:?}");
     }
 
     Ok(())
