@@ -7,3 +7,4 @@ edition = "2024"
 snafu-tracing.workspace = true
 snafu.workspace = true
 anyhow = "1.0"
+reqwest = { version = "0.12", features = ["json", "blocking"] }
