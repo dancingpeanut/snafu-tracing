@@ -21,4 +21,4 @@ where
     }
 }
 
-pub type KResult<T, E = KError> = std::result::Result<T, E>;
+pub type Result<T, E = KError> = std::result::Result<T, E>;
