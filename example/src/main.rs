@@ -29,7 +29,7 @@ fn main() -> errors::Result<()> {
     if let Err(e) = gg::g1() {
         println!("--11: {e:?}");
         match e {
-            Error::Wrap { error, .. } => {
+            Error::Any { error, .. } => {
                 if let Some(e) = error.downcast_ref::<std::io::Error>() {
                     println!("IO error: {:?}", e);
                 } else {

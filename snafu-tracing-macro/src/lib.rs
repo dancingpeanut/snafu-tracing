@@ -52,11 +52,11 @@ pub fn enrich_error(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // 添加新的两个变体
     let extra_variants: ItemEnum = syn::parse2(quote! {
         enum Dummy {
-            Message {
+            Context {
                 msg: String,
                 #extra_fields
             },
-            Wrap {
+            Any {
                 error: Box<dyn std::error::Error + Send + Sync + 'static>,
                 #extra_fields
             }
@@ -112,7 +112,7 @@ pub fn enrich_with_chain(_attr: TokenStream, item: TokenStream) -> TokenStream {
         {
             #[track_caller]
             fn from(e: E) -> Self {
-                #enum_ident::Wrap {
+                #enum_ident::Any {
                     error: Box::new(e),
                     location: Location::default(),
                     chain: None,
@@ -154,8 +154,8 @@ pub fn derive_wrap(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
             if let Some(error_ty) = error_field_type {
                 let impl_block = quote! {
-                    impl<T> Wrap<T> for Result<T, #error_ty> {
-                        fn wrap(self) -> Result<T, #enum_name> {
+                    impl<T> Wrap<T> for std::result::Result<T, #error_ty> {
+                        fn wrap(self) -> std::result::Result<T, #enum_name> {
                             self.map_err(|e| {
                                 #enum_name::#variant_name {
                                     #(#field_assignments),*
