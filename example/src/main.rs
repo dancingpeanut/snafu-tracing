@@ -5,6 +5,7 @@ mod m1;
 mod m2;
 mod kk;
 mod gg;
+mod location;
 
 fn main() -> errors::Result<()> {
     if let Err(e) = m1::hello_err() {

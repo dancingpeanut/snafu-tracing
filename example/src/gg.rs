@@ -1,5 +1,5 @@
 use std::fs::File;
-use crate::kk::{MyError, KResult};
+use crate::kk::{KResult};
 
 pub fn g1() -> KResult<()> {
     let _ = File::open("test.txt")?;
