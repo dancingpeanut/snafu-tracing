@@ -105,6 +105,20 @@ pub fn enrich_with_chain(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 chain
             }
         }
+        
+        impl<E> From<E> for #enum_ident
+        where
+            E: core::error::Error + Send + Sync + 'static,
+        {
+            #[track_caller]
+            fn from(e: E) -> Self {
+                #enum_ident::Wrap {
+                    error: Box::new(e),
+                    location: Location::default(),
+                    chain: None,
+                }
+            }
+        }
     };
 
     enum_def.into()
