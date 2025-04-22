@@ -30,10 +30,6 @@ fn main() -> errors::Result<()> {
         println!("--11: {e:?}");
         match e {
             Error::Wrap { error, .. } => {
-                match error.downcast_ref::<std::io::Error>() {
-                    None => {}
-                    Some(_) => {}
-                }
                 if let Some(e) = error.downcast_ref::<std::io::Error>() {
                     println!("IO error: {:?}", e);
                 } else {
