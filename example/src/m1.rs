@@ -5,7 +5,8 @@ use crate::m2::hello_m2;
 use crate::errors::{error, Result};
 
 pub fn hello_err1() -> Result<()> {
-    Err(error::Code { id: 1u16 }.build())
+    let e = error::Code::new(12).build();
+    Err(e)
 }
 
 pub fn hello_err2() -> Result<()> {
@@ -31,7 +32,7 @@ pub fn hello_file() -> Result<()> {
     // let _ = File::open("test.txt")
     //     .boxed()
     //     .context(error::Wrap)?;
-    let _ = File::open("test.txt").wrap()?;
+    let _ = File::open("test.txt")?;
 
     Ok(())
 }

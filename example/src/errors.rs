@@ -28,3 +28,16 @@ pub enum Error {
 
 // quick_tracing!(anyerr, crate::errors::error::Any);
 pub use anyerr;
+
+impl From<std::io::Error> for Error {
+    #[track_caller]
+    fn from(e: std::io::Error) -> Self {
+        Error::IO { error: e, _location: Default::default() }
+    }
+}
+
+impl error::Code<u16> {
+    pub fn new(id: u16) -> Self {
+        Self { id }
+    }
+}
